@@ -1,0 +1,365 @@
+
+{
+  "entities": {
+    "Expense": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Expense",
+      "type": "object",
+      "description": "Represents a single expense record.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the expense record."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the expense.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the expense."
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to Category. (Relationship: Category 1:N Expense)"
+        },
+        "paymentMethodId": {
+          "type": "string",
+          "description": "Reference to PaymentMethod. (Relationship: PaymentMethod 1:N Expense)"
+        },
+        "classificationId": {
+          "type": "string",
+          "description": "Reference to Classification. (Relationship: Classification 1:N Expense)"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Optional notes or description for the expense."
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "amount",
+        "categoryId",
+        "paymentMethodId",
+        "classificationId"
+      ]
+    },
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
+      "type": "object",
+      "description": "Represents a category of expenses (e.g., groceries, utilities).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the category."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the category."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the category."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "PaymentMethod": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "PaymentMethod",
+      "type": "object",
+      "description": "Represents a payment method (e.g., credit card, cash).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the payment method."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the payment method."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the payment method."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Classification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Classification",
+      "type": "object",
+      "description": "Represents the classification of an expense (e.g., personal, household).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the classification."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the classification."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional description of the classification."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Budget": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Budget",
+      "type": "object",
+      "description": "Represents a budget set for a specific category and duration.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the budget."
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to Category. (Relationship: Category 1:N Budget)"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "Start date of the budget period.",
+          "format": "date-time"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "End date of the budget period.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Budgeted amount for the period."
+        }
+      },
+      "required": [
+        "id",
+        "categoryId",
+        "startDate",
+        "endDate",
+        "amount"
+      ]
+    },
+    "SavingLocation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SavingLocation",
+      "type": "object",
+      "description": "Represents a location where savings are stored.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the saving location."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the saving location."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Saving": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Saving",
+      "type": "object",
+      "description": "Represents a single saving record.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the saving record."
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the saving.",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Amount of the saving."
+        },
+        "locationId": {
+          "type": "string",
+          "description": "Reference to SavingLocation."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the saving."
+        }
+      },
+      "required": [
+        "id",
+        "date",
+        "amount",
+        "locationId",
+        "description"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "google.com"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}/expenses/{expenseId}",
+        "definition": {
+          "entityName": "Expense",
+          "schema": {
+            "$ref": "#/backend/entities/Expense"
+          },
+          "description": "Stores individual expense records for a specific user.  Access is restricted to the user identified by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "expenseId",
+              "description": "The unique identifier for the expense record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores expense categories defined by a specific user. Access is restricted to the user identified by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "categoryId",
+              "description": "The unique identifier for the category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/paymentMethods/{paymentMethodId}",
+        "definition": {
+          "entityName": "PaymentMethod",
+          "schema": {
+            "$ref": "#/backend/entities/PaymentMethod"
+          },
+          "description": "Stores payment methods defined by a specific user. Access is restricted to the user identified by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "paymentMethodId",
+              "description": "The unique identifier for the payment method."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/classifications/{classificationId}",
+        "definition": {
+          "entityName": "Classification",
+          "schema": {
+            "$ref": "#/backend/entities/Classification"
+          },
+          "description": "Stores expense classifications defined by a specific user. Access is restricted to the user identified by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "classificationId",
+              "description": "The unique identifier for the classification."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/budgets/{budgetId}",
+        "definition": {
+          "entityName": "Budget",
+          "schema": {
+            "$ref": "#/backend/entities/Budget"
+          },
+          "description": "Stores budget records for a specific user. Access is restricted to the user identified by {userId}.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "budgetId",
+              "description": "The unique identifier for the budget."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/savingLocations/{savingLocationId}",
+        "definition": {
+          "entityName": "SavingLocation",
+          "schema": {
+            "$ref": "#/backend/entities/SavingLocation"
+          },
+          "description": "Stores saving locations defined by a specific user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "savingLocationId",
+              "description": "The unique identifier for the saving location."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/savings/{savingId}",
+        "definition": {
+          "entityName": "Saving",
+          "schema": {
+            "$ref": "#/backend/entities/Saving"
+          },
+          "description": "Stores individual saving records for a specific user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "savingId",
+              "description": "The unique identifier for the saving record."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "Given the application's focus on personal expense tracking and budgeting, the Firestore structure is designed around user-centric data organization, ensuring data isolation and simplified security rules. Authentication is handled via Google Sign-In, and a user's unique ID is used to tie all their data entities together.\n\nThe structure uses path-based ownership (`/users/{userId}/...`) for all data entities (Expenses, Categories, PaymentMethods, Classifications, Budgets, and Insights). This approach ensures that each user has exclusive access to their own data.\n\nThis structure inherently provides Authorization Independence, as access control is determined solely by the user ID in the path. There is no reliance on parent document data for authorization.\n\nThe structure facilitates secure `list` operations (QAPs) because data is segregated by user ID. Rules can easily restrict listing to the currently authenticated user's data without needing complex filtering."
+  }
+}

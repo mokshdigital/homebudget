@@ -1,0 +1,29 @@
+# Settings to manage and configure a Firebase App Hosting backend.
+# https://firebase.google.com/docs/app-hosting/configure
+
+runConfig:
+  # The server will automatically scale based on traffic.
+  # For more control, you can specify min and max instances.
+  # minInstances: 0
+  # maxInstances: 10
+
+# The following is an example of a more complex App Hosting configuration.
+# For more information, see https://firebase.google.com/docs/app-hosting/configure.
+#
+# runConfig:
+#   cpu: 2
+#   memoryMiB: 1024
+#   maxInstances: 10
+#   minInstances: 1
+#
+# env:
+#   - variable: API_KEY
+#     secret: API_KEY_SECRET
+#   - variable: MY_ENV_VAR
+#     value: my-value
+
+# Required for Genkit to work with App Hosting.
+# See https://firebase.google.com/docs/app-hosting/manage-deploys#genkit
+gcb:
+  customWorkerPool:
+    useDevGenkitPool: true

@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeBudget AI - Case Study</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================
+       CSS VARIABLES & RESET
+       ============================================ */
+    :root {
+      --color-bg: #0a0a0b;
+      --color-bg-card: #111113;
+      --color-bg-elevated: #18181b;
+      --color-text: #fafafa;
+      --color-text-muted: #a1a1aa;
+      --color-text-subtle: #71717a;
+      --color-primary: #6366f1;
+      --color-primary-light: #818cf8;
+      --color-accent-blue: #3b82f6;
+      --color-accent-emerald: #10b981;
+      --color-accent-violet: #8b5cf6;
+      --color-accent-amber: #f59e0b;
+      --color-border: #27272a;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ============================================
+       BASE STYLES
+       ============================================ */
+    .case-study-container {
+      font-family: var(--font-family);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    .case-study-container img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .case-study-container a {
+      color: var(--color-primary-light);
+      text-decoration: none;
+      transition: color 0.2s var(--transition-smooth);
+    }
+
+    .case-study-container a:hover {
+      color: var(--color-primary);
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .cs-section {
+      padding: 100px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .cs-section--full {
+      max-width: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .cs-section--narrow {
+      max-width: 800px;
+    }
+
+    .cs-grid {
+      display: grid;
+      gap: 40px;
+    }
+
+    .cs-grid--2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cs-grid--3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (max-width: 768px) {
+      .cs-section {
+        padding: 60px 20px;
+      }
+      .cs-grid--2,
+      .cs-grid--3 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    .cs-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-primary-light);
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .cs-heading-xl {
+      font-size: clamp(40px, 8vw, 72px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 24px;
+    }
+
+    .cs-heading-lg {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .cs-heading-md {
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+
+    .cs-heading-sm {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .cs-text {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      max-width: 640px;
+    }
+
+    .cs-text--large {
+      font-size: 22px;
+      line-height: 1.8;
+    }
+
+    .cs-gradient-text {
+      background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-emerald) 50%, var(--color-accent-violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ============================================
+       ANIMATION CLASSES
+       ============================================ */
+    .cs-animate {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s var(--transition-smooth), transform 0.8s var(--transition-smooth);
+    }
+
+    .cs-animate.cs-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cs-animate--delay-1 { transition-delay: 0.1s; }
+    .cs-animate--delay-2 { transition-delay: 0.2s; }
+    .cs-animate--delay-3 { transition-delay: 0.3s; }
+    .cs-animate--delay-4 { transition-delay: 0.4s; }
+    .cs-animate--delay-5 { transition-delay: 0.5s; }
+
+    .cs-animate--scale {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.6s var(--transition-smooth), transform 0.6s var(--transition-smooth);
+    }
+
+    .cs-animate--scale.cs-visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .cs-animate--slide-left {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+
+    .cs-animate--slide-left.cs-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .cs-animate--slide-right {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+
+    .cs-animate--slide-right.cs-visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ============================================
+       HERO SECTION
+       ============================================ */
+    .cs-hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 120px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cs-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      height: 100%;
+      background: radial-gradient(ellipse at center top, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .cs-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cs-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      justify-content: center;
+      margin-top: 48px;
+    }
+
+    .cs-hero-meta-item {
+      text-align: center;
+    }
+
+    .cs-hero-meta-label {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--color-text-subtle);
+      margin-bottom: 4px;
+    }
+
+    .cs-hero-meta-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text);
+    }
+
+    .cs-hero-image {
+      margin-top: 80px;
+      max-width: 1000px;
+      width: 100%;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.5),
+                  0 0 0 1px rgba(255, 255, 255, 0.05);
+      transition: transform 0.5s var(--transition-smooth), box-shadow 0.5s var(--transition-smooth);
+    }
+
+    .cs-hero-image:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 60px 100px -20px rgba(0, 0, 0, 0.6),
+                  0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .cs-hero-image img {
+      display: block;
+      width: 100%;
+    }
+
+    .cs-scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--color-text-subtle);
+      font-size: 12px;
+      animation: cs-bounce 2s infinite;
+    }
+
+    @keyframes cs-bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+      40% { transform: translateX(-50%) translateY(-10px); }
+      60% { transform: translateX(-50%) translateY(-5px); }
+    }
+
+    /* ============================================
+       STORY SECTION (Personal Touch)
+       ============================================ */
+    .cs-story {
+      background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-card) 100%);
+      position: relative;
+    }
+
+    .cs-story-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .cs-story-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+    }
+
+    .cs-story-quote {
+      font-size: 28px;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.6;
+      color: var(--color-text);
+      position: relative;
+      padding-left: 32px;
+      border-left: 3px solid var(--color-primary);
+    }
+
+    .cs-story-author {
+      margin-top: 24px;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+    }
+
+    /* ============================================
+       OVERVIEW CARDS
+       ============================================ */
+    .cs-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .cs-overview-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: transform 0.3s var(--transition-smooth), border-color 0.3s var(--transition-smooth), box-shadow 0.3s var(--transition-smooth);
+    }
+
+    .cs-overview-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-primary);
+      box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.2);
+    }
+
+    .cs-overview-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-violet) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    /* ============================================
+       PROCESS TIMELINE
+       ============================================ */
+    .cs-timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .cs-timeline::before {
+      content: '';
+      position: absolute;
+      left: 12px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-accent-emerald) 100%);
+    }
+
+    .cs-timeline-item {
+      position: relative;
+      padding-bottom: 48px;
+    }
+
+    .cs-timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .cs-timeline-marker {
+      position: absolute;
+      left: -40px;
+      top: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-bg);
+      border: 3px solid var(--color-primary);
+      transition: transform 0.3s var(--transition-smooth), background 0.3s var(--transition-smooth);
+    }
+
+    .cs-timeline-item:hover .cs-timeline-marker {
+      transform: scale(1.2);
+      background: var(--color-primary);
+    }
+
+    .cs-timeline-content {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.3s var(--transition-smooth);
+    }
+
+    .cs-timeline-item:hover .cs-timeline-content {
+      border-color: var(--color-primary);
+    }
+
+    /* ============================================
+       FEATURES SHOWCASE
+       ============================================ */
+    .cs-feature-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      padding: 80px 0;
+    }
+
+    .cs-feature-showcase:nth-child(even) {
+      direction: rtl;
+    }
+
+    .cs-feature-showcase:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    @media (max-width: 900px) {
+      .cs-feature-showcase,
+      .cs-feature-showcase:nth-child(even) {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        direction: ltr;
+      }
+    }
+
+    .cs-feature-image {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.4);
+      transition: transform 0.4s var(--transition-smooth);
+    }
+
+    .cs-feature-image:hover {
+      transform: scale(1.02);
+    }
+
+    .cs-feature-image img {
+      display: block;
+      width: 100%;
+    }
+
+    .cs-feature-image::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 60%, rgba(0, 0, 0, 0.3) 100%);
+      pointer-events: none;
+    }
+
+    .cs-feature-number {
+      font-size: 120px;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--color-bg-elevated);
+      position: absolute;
+      top: -40px;
+      left: -20px;
+      z-index: -1;
+    }
+
+    .cs-feature-text {
+      position: relative;
+    }
+
+    /* ============================================
+       TECH STACK
+       ============================================ */
+    .cs-tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .cs-tech-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s var(--transition-smooth);
+      cursor: default;
+    }
+
+    .cs-tech-badge:hover {
+      transform: translateY(-4px);
+      border-color: var(--color-primary);
+      box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.3);
+    }
+
+    .cs-tech-badge-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ============================================
+       STATS / METRICS
+       ============================================ */
+    .cs-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .cs-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cs-stat {
+      padding: 32px;
+    }
+
+    .cs-stat-value {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-emerald) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cs-stat-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================
+       CHALLENGES SECTION
+       ============================================ */
+    .cs-challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+
+    @media (max-width: 768px) {
+      .cs-challenges-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cs-challenge-card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: 16px;
+      padding: 32px;
+      transition: all 0.3s var(--transition-smooth);
+    }
+
+    .cs-challenge-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+    }
+
+    .cs-challenge-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .cs-solution-tag {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-accent-emerald);
+    }
+
+    /* ============================================
+       GALLERY
+       ============================================ */
+    .cs-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .cs-gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .cs-gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      cursor: pointer;
+      transition: transform 0.4s var(--transition-smooth);
+    }
+
+    .cs-gallery-item:hover {
+      transform: scale(1.03);
+      z-index: 10;
+    }
+
+    .cs-gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s var(--transition-smooth);
+    }
+
+    .cs-gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .cs-gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+      opacity: 0;
+      transition: opacity 0.3s var(--transition-smooth);
+    }
+
+    .cs-gallery-item:hover::after {
+      opacity: 1;
+    }
+
+    .cs-gallery-caption {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      color: white;
+      font-weight: 500;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s var(--transition-smooth);
+      z-index: 2;
+    }
+
+    .cs-gallery-item:hover .cs-gallery-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================
+       CTA SECTION
+       ============================================ */
+    .cs-cta {
+      text-align: center;
+      background: linear-gradient(180deg, var(--color-bg-card) 0%, var(--color-bg) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cs-cta::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      height: 50%;
+      background: radial-gradient(ellipse at center bottom, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .cs-cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .cs-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s var(--transition-smooth);
+      text-decoration: none;
+    }
+
+    .cs-button--primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-violet) 100%);
+      color: white;
+      box-shadow: 0 10px 30px -5px rgba(99, 102, 241, 0.5);
+    }
+
+    .cs-button--primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px -5px rgba(99, 102, 241, 0.6);
+      color: white;
+    }
+
+    .cs-button--secondary {
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .cs-button--secondary:hover {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--color-text);
+    }
+
+    /* ============================================
+       DIVIDER
+       ============================================ */
+    .cs-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--color-border) 50%, transparent 100%);
+      margin: 0 auto;
+      max-width: 600px;
+    }
+
+    /* ============================================
+       PLACEHOLDER IMAGES
+       ============================================ */
+    .cs-placeholder-img {
+      background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-card) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-subtle);
+      font-size: 14px;
+      min-height: 300px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ================================================
+     CASE STUDY CONTENT - COPY EVERYTHING BELOW
+     ================================================ -->
+<div class="case-study-container">
+
+  <!-- HERO SECTION -->
+  <section class="cs-hero">
+    <div class="cs-hero-content">
+      <span class="cs-label cs-animate">Case Study</span>
+      <h1 class="cs-heading-xl cs-animate cs-animate--delay-1">
+        HomeBudget<span class="cs-gradient-text">AI</span>
+      </h1>
+      <p class="cs-text cs-text--large cs-animate cs-animate--delay-2" style="max-width: 600px; margin: 0 auto;">
+        A modern personal finance application that helps users track expenses, manage budgets, and gain insights into their spending habits.
+      </p>
+      
+      <div class="cs-hero-meta cs-animate cs-animate--delay-3">
+        <div class="cs-hero-meta-item">
+          <div class="cs-hero-meta-label">Role</div>
+          <div class="cs-hero-meta-value">UX Designer & Full-Stack Developer</div>
+        </div>
+        <div class="cs-hero-meta-item">
+          <div class="cs-hero-meta-label">Timeline</div>
+          <div class="cs-hero-meta-value">4 Weeks</div>
+        </div>
+        <div class="cs-hero-meta-item">
+          <div class="cs-hero-meta-label">Platform</div>
+          <div class="cs-hero-meta-value">Web Application</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-hero-image cs-animate cs-animate--delay-4">
+      <div class="cs-placeholder-img" style="min-height: 500px;">
+        [Replace with Dashboard Screenshot]
+      </div>
+    </div>
+
+    <div class="cs-scroll-indicator">
+      <span>Scroll to explore</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M19 12l-7 7-7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- THE STORY BEHIND (Personal Touch) -->
+  <section class="cs-section cs-story">
+    <div class="cs-story-content">
+      <div class="cs-animate cs-animate--slide-left">
+        <span class="cs-label">The Story Behind</span>
+        <h2 class="cs-heading-lg">Why I Built This</h2>
+        <p class="cs-text">
+          Like many people, I found myself constantly wondering where my money was going each month. Spreadsheets were tedious, existing apps were either too complex or lacked the features I needed, and I wanted something that truly fit my household's financial workflow.
+        </p>
+        <p class="cs-text" style="margin-top: 20px;">
+          So I decided to build exactly what I needed — a clean, intuitive budget tracker that would give me complete visibility into my home expenses, income, and savings at a glance. What started as a personal project evolved into a fully-featured application that I now use daily to manage my finances.
+        </p>
+      </div>
+      <div class="cs-animate cs-animate--slide-right cs-animate--delay-2">
+        <blockquote class="cs-story-quote">
+          "I wanted to build something I would actually use every day — not just another portfolio project that sits in a GitHub repo collecting dust."
+        </blockquote>
+        <p class="cs-story-author">— That was my guiding principle</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="cs-divider"></div>
+
+  <!-- PROJECT OVERVIEW -->
+  <section class="cs-section">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Project Overview</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">The Challenge & Solution</h2>
+      <p class="cs-text cs-animate cs-animate--delay-2" style="margin: 0 auto;">
+        I needed a comprehensive yet simple way to track all aspects of my household finances without the complexity of traditional accounting software.
+      </p>
+    </div>
+
+    <div class="cs-overview-grid">
+      <div class="cs-overview-card cs-animate">
+        <div class="cs-overview-icon">🎯</div>
+        <h3 class="cs-heading-sm">The Problem</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          Existing budget apps were either too simple (just expense tracking) or too complex (full accounting suites). I needed something in between — easy to use daily but powerful enough for real insights.
+        </p>
+      </div>
+      <div class="cs-overview-card cs-animate cs-animate--delay-1">
+        <div class="cs-overview-icon">💡</div>
+        <h3 class="cs-heading-sm">The Solution</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          A modern web app with separate tracking for expenses, income, and savings. Quick data entry forms with inline creation of categories. Beautiful visualizations for understanding spending patterns.
+        </p>
+      </div>
+      <div class="cs-overview-card cs-animate cs-animate--delay-2">
+        <div class="cs-overview-icon">🚀</div>
+        <h3 class="cs-heading-sm">The Impact</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          I now have complete visibility into my finances. Data entry takes seconds, and I can instantly see where my money is going. The app has become part of my daily routine.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MY ROLE -->
+  <section class="cs-section" style="background: var(--color-bg-card);">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">My Role</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">End-to-End Ownership</h2>
+    </div>
+
+    <div class="cs-grid cs-grid--2">
+      <div class="cs-animate">
+        <h3 class="cs-heading-md" style="color: var(--color-primary-light);">UX Design</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ User research & persona development</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Information architecture & user flows</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Wireframing & prototyping</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Visual design & component library</li>
+          <li style="padding: 12px 0; color: var(--color-text-muted);">✓ Usability testing & iteration</li>
+        </ul>
+      </div>
+      <div class="cs-animate cs-animate--delay-2">
+        <h3 class="cs-heading-md" style="color: var(--color-accent-emerald);">Development</h3>
+        <ul style="list-style: none; padding: 0;">
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Frontend architecture with Next.js 15</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Backend & database design with Supabase</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Authentication & security implementation</li>
+          <li style="padding: 12px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text-muted);">✓ Real-time data synchronization</li>
+          <li style="padding: 12px 0; color: var(--color-text-muted);">✓ Deployment & DevOps (Vercel)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESIGN PROCESS -->
+  <section class="cs-section">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Design Process</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">From Concept to Reality</h2>
+    </div>
+
+    <div class="cs-timeline">
+      <div class="cs-timeline-item cs-animate">
+        <div class="cs-timeline-marker"></div>
+        <div class="cs-timeline-content">
+          <h3 class="cs-heading-sm">1. Research & Discovery</h3>
+          <p class="cs-text" style="font-size: 16px;">
+            Analyzed my own pain points with existing budget apps. Identified core use cases: quick expense logging, income tracking, savings goals, and spending insights. Mapped out the daily workflow I wanted.
+          </p>
+        </div>
+      </div>
+      <div class="cs-timeline-item cs-animate cs-animate--delay-1">
+        <div class="cs-timeline-marker"></div>
+        <div class="cs-timeline-content">
+          <h3 class="cs-heading-sm">2. Information Architecture</h3>
+          <p class="cs-text" style="font-size: 16px;">
+            Designed a clear navigation structure: Dashboard for overview, separate sections for Expenses/Income/Savings, Budgets for planning, Reports for analysis, and Settings for customization.
+          </p>
+        </div>
+      </div>
+      <div class="cs-timeline-item cs-animate cs-animate--delay-2">
+        <div class="cs-timeline-marker"></div>
+        <div class="cs-timeline-content">
+          <h3 class="cs-heading-sm">3. Visual Design</h3>
+          <p class="cs-text" style="font-size: 16px;">
+            Created a dark theme UI with vibrant accent colors for data visualization. Focused on readability, hierarchy, and reducing visual clutter. Used color strategically: green for income, red for expenses, purple for savings.
+          </p>
+        </div>
+      </div>
+      <div class="cs-timeline-item cs-animate cs-animate--delay-3">
+        <div class="cs-timeline-marker"></div>
+        <div class="cs-timeline-content">
+          <h3 class="cs-heading-sm">4. Development & Iteration</h3>
+          <p class="cs-text" style="font-size: 16px;">
+            Built with Next.js and Supabase for a modern, performant stack. Continuously refined the UX based on actual daily usage — adding quick-add features, improving date filtering, simplifying forms.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES SHOWCASE -->
+  <section class="cs-section cs-section--full" style="background: var(--color-bg-card); padding: 100px 24px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div style="text-align: center; margin-bottom: 60px;">
+        <span class="cs-label cs-animate">Key Features</span>
+        <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">What Makes It Special</h2>
+      </div>
+
+      <!-- Feature 1 -->
+      <div class="cs-feature-showcase">
+        <div class="cs-feature-text cs-animate cs-animate--slide-left">
+          <span class="cs-feature-number">01</span>
+          <h3 class="cs-heading-md">Intuitive Dashboard</h3>
+          <p class="cs-text">
+            A single view showing total income, spending, and savings for the selected period. Recent transactions at a glance with category-based spending breakdown. Date range filters for flexible analysis.
+          </p>
+        </div>
+        <div class="cs-feature-image cs-animate cs-animate--slide-right cs-animate--delay-2">
+          <div class="cs-placeholder-img" style="min-height: 350px;">
+            [Dashboard Screenshot]
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="cs-feature-showcase">
+        <div class="cs-feature-text cs-animate cs-animate--slide-right">
+          <span class="cs-feature-number">02</span>
+          <h3 class="cs-heading-md">Quick Data Entry</h3>
+          <p class="cs-text">
+            Add expenses in seconds with a streamlined form. Create new categories, vendors, or payment methods on-the-fly without leaving the form. No friction between thought and action.
+          </p>
+        </div>
+        <div class="cs-feature-image cs-animate cs-animate--slide-left cs-animate--delay-2">
+          <div class="cs-placeholder-img" style="min-height: 350px;">
+            [Add Expense Form Screenshot]
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="cs-feature-showcase">
+        <div class="cs-feature-text cs-animate cs-animate--slide-left">
+          <span class="cs-feature-number">03</span>
+          <h3 class="cs-heading-md">Comprehensive Tracking</h3>
+          <p class="cs-text">
+            Separate sections for expenses, income, and savings — each with their own customizable categories. Full CRUD operations with inline editing. Sortable and filterable data tables.
+          </p>
+        </div>
+        <div class="cs-feature-image cs-animate cs-animate--slide-right cs-animate--delay-2">
+          <div class="cs-placeholder-img" style="min-height: 350px;">
+            [Expenses List Screenshot]
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="cs-feature-showcase">
+        <div class="cs-feature-text cs-animate cs-animate--slide-right">
+          <span class="cs-feature-number">04</span>
+          <h3 class="cs-heading-md">Flexible Settings</h3>
+          <p class="cs-text">
+            Fully customizable categories, payment methods, vendors, income sources, and saving locations. Manage everything from a central settings panel. Transfer transactions when merging or deleting categories.
+          </p>
+        </div>
+        <div class="cs-feature-image cs-animate cs-animate--slide-left cs-animate--delay-2">
+          <div class="cs-placeholder-img" style="min-height: 350px;">
+            [Settings Screenshot]
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="cs-section">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Tech Stack</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">Built With Modern Tools</h2>
+    </div>
+
+    <div class="cs-tech-stack cs-animate cs-animate--delay-2">
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">⚛️</span>
+        Next.js 15
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">📘</span>
+        TypeScript
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">🎨</span>
+        Tailwind CSS
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">🗄️</span>
+        Supabase
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">🔐</span>
+        Supabase Auth
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">🎭</span>
+        Framer Motion
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">🧩</span>
+        shadcn/ui
+      </div>
+      <div class="cs-tech-badge">
+        <span class="cs-tech-badge-icon">▲</span>
+        Vercel
+      </div>
+    </div>
+  </section>
+
+  <!-- CHALLENGES & SOLUTIONS -->
+  <section class="cs-section" style="background: var(--color-bg-card);">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Challenges & Solutions</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">Problems I Solved</h2>
+    </div>
+
+    <div class="cs-challenges-grid">
+      <div class="cs-challenge-card cs-animate">
+        <span class="cs-challenge-tag">Challenge</span>
+        <h3 class="cs-heading-sm">Date Filtering Accuracy</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          Transactions weren't appearing in "This Month" filter due to timezone issues when parsing ISO date strings.
+        </p>
+        <div style="margin-top: 24px;">
+          <span class="cs-challenge-tag cs-solution-tag">Solution</span>
+          <p class="cs-text" style="font-size: 16px; margin-top: 12px;">
+            Implemented local timezone-aware date parsing by splitting YYYY-MM-DD strings and constructing Date objects with explicit year, month, day values.
+          </p>
+        </div>
+      </div>
+      <div class="cs-challenge-card cs-animate cs-animate--delay-1">
+        <span class="cs-challenge-tag">Challenge</span>
+        <h3 class="cs-heading-sm">Quick Category Creation</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          Users (me) often needed to create new categories while adding an expense, but had to navigate away to settings first.
+        </p>
+        <div style="margin-top: 24px;">
+          <span class="cs-challenge-tag cs-solution-tag">Solution</span>
+          <p class="cs-text" style="font-size: 16px; margin-top: 12px;">
+            Added "Add New" buttons inline with each dropdown in the expense form, opening a quick modal to create new items without leaving the context.
+          </p>
+        </div>
+      </div>
+      <div class="cs-challenge-card cs-animate cs-animate--delay-2">
+        <span class="cs-challenge-tag">Challenge</span>
+        <h3 class="cs-heading-sm">Database Schema Mismatch</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          Supabase uses snake_case columns while the frontend code uses camelCase, causing data mapping issues.
+        </p>
+        <div style="margin-top: 24px;">
+          <span class="cs-challenge-tag cs-solution-tag">Solution</span>
+          <p class="cs-text" style="font-size: 16px; margin-top: 12px;">
+            Created bidirectional utility functions to automatically convert between snake_case and camelCase when reading from and writing to the database.
+          </p>
+        </div>
+      </div>
+      <div class="cs-challenge-card cs-animate cs-animate--delay-3">
+        <span class="cs-challenge-tag">Challenge</span>
+        <h3 class="cs-heading-sm">Real-time Auth State</h3>
+        <p class="cs-text" style="font-size: 16px;">
+          Managing authentication state consistently across server components, client components, and API routes in Next.js 15.
+        </p>
+        <div style="margin-top: 24px;">
+          <span class="cs-challenge-tag cs-solution-tag">Solution</span>
+          <p class="cs-text" style="font-size: 16px; margin-top: 12px;">
+            Implemented separate Supabase client factories for browser, server, and middleware contexts using @supabase/ssr package with proper cookie handling.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="cs-section">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Screenshots</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">The App in Action</h2>
+    </div>
+
+    <div class="cs-gallery">
+      <div class="cs-gallery-item cs-animate">
+        <div class="cs-placeholder-img" style="height: 100%;">[Dashboard]</div>
+        <span class="cs-gallery-caption">Dashboard Overview</span>
+      </div>
+      <div class="cs-gallery-item cs-animate cs-animate--delay-1">
+        <div class="cs-placeholder-img" style="height: 100%;">[Expenses]</div>
+        <span class="cs-gallery-caption">Expense Tracking</span>
+      </div>
+      <div class="cs-gallery-item cs-animate cs-animate--delay-2">
+        <div class="cs-placeholder-img" style="height: 100%;">[Income]</div>
+        <span class="cs-gallery-caption">Income Management</span>
+      </div>
+      <div class="cs-gallery-item cs-animate cs-animate--delay-3">
+        <div class="cs-placeholder-img" style="height: 100%;">[Savings]</div>
+        <span class="cs-gallery-caption">Savings Tracker</span>
+      </div>
+      <div class="cs-gallery-item cs-animate cs-animate--delay-4">
+        <div class="cs-placeholder-img" style="height: 100%;">[Settings]</div>
+        <span class="cs-gallery-caption">Customizable Settings</span>
+      </div>
+      <div class="cs-gallery-item cs-animate cs-animate--delay-5">
+        <div class="cs-placeholder-img" style="height: 100%;">[Mobile]</div>
+        <span class="cs-gallery-caption">Mobile Responsive</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS / METRICS -->
+  <section class="cs-section" style="background: linear-gradient(180deg, var(--color-bg-card) 0%, var(--color-bg) 100%);">
+    <div style="text-align: center; margin-bottom: 60px;">
+      <span class="cs-label cs-animate">Results</span>
+      <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">By the Numbers</h2>
+    </div>
+
+    <div class="cs-stats-grid">
+      <div class="cs-stat cs-animate">
+        <div class="cs-stat-value">100%</div>
+        <div class="cs-stat-label">Self-Built</div>
+      </div>
+      <div class="cs-stat cs-animate cs-animate--delay-1">
+        <div class="cs-stat-value">4</div>
+        <div class="cs-stat-label">Weeks to Build</div>
+      </div>
+      <div class="cs-stat cs-animate cs-animate--delay-2">
+        <div class="cs-stat-value">10+</div>
+        <div class="cs-stat-label">Core Features</div>
+      </div>
+      <div class="cs-stat cs-animate cs-animate--delay-3">
+        <div class="cs-stat-value">Daily</div>
+        <div class="cs-stat-label">Personal Use</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cs-section cs-cta">
+    <span class="cs-label cs-animate">Get In Touch</span>
+    <h2 class="cs-heading-lg cs-animate cs-animate--delay-1">
+      Interested in working together?
+    </h2>
+    <p class="cs-text cs-animate cs-animate--delay-2" style="margin: 0 auto;">
+      I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
+    </p>
+    <div class="cs-cta-buttons cs-animate cs-animate--delay-3">
+      <a href="#contact" class="cs-button cs-button--primary">
+        Let's Talk
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a href="#" class="cs-button cs-button--secondary">
+        View Live Demo
+      </a>
+    </div>
+  </section>
+
+</div>
+<!-- ================================================
+     END CASE STUDY CONTENT
+     ================================================ -->
+
+<script>
+  // Intersection Observer for scroll animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const animatedElements = document.querySelectorAll('.cs-animate');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('cs-visible');
+        }
+      });
+    }, {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
+
+    animatedElements.forEach(el => observer.observe(el));
+  });
+
+  // Smooth parallax effect on scroll (subtle)
+  let ticking = false;
+  document.addEventListener('scroll', function() {
+    if (!ticking) {
+      window.requestAnimationFrame(function() {
+        const scrolled = window.pageYOffset;
+        const heroImage = document.querySelector('.cs-hero-image');
+        if (heroImage && scrolled < window.innerHeight) {
+          heroImage.style.transform = `translateY(${scrolled * 0.1}px)`;
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+</script>
+
+</body>
+</html>
