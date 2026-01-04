@@ -27,6 +27,7 @@ import {
   LogOut,
   Loader2,
   PlusCircle,
+  Home,
 } from "lucide-react";
 import { AppLogo } from "@/components/app-logo";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,6 +54,21 @@ const mobileMenuItems = [
   { href: "/budgets", icon: Wallet, label: "Budgets" },
   { href: "/settings", icon: Settings, label: "Settings" },
 ];
+
+function HomeDisplay() {
+  const { currentHome } = useData();
+
+  if (!currentHome) return null;
+
+  return (
+    <div className="px-2 py-2 mb-2 bg-muted/30 rounded-md border border-border/40 mx-2">
+      <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+        <Home className="h-4 w-4 text-primary" />
+        <span className="truncate">{currentHome.name}</span>
+      </div>
+    </div>
+  );
+}
 
 function UserProfile() {
   const { user, signOut } = useData();
@@ -219,6 +235,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
       <Sidebar className="hidden md:block">
         <SidebarHeader>
           <AppLogo />
+          <HomeDisplay />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>

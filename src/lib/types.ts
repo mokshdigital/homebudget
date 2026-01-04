@@ -6,6 +6,27 @@
 // Re-export database types for direct Supabase usage
 export type { Tables, InsertTables, UpdateTables } from './supabase/database.types';
 
+// Home/Household types
+export type Home = {
+  id: string;
+  name: string;
+  inviteCode: string | null;
+  inviteExpiresAt: string | null;
+  createdAt: string;
+  createdBy: string;
+};
+
+export type HomeMember = {
+  id: string;
+  homeId: string;
+  userId: string;
+  role: 'owner' | 'member';
+  displayName: string | null;
+  joinedAt: string;
+  // Joined from auth.users for display
+  email?: string;
+};
+
 export type Category = {
   id: string;
   name: string;

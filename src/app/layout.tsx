@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { MotionProvider } from '@/components/motion-provider';
 import { DataProvider } from '@/lib/data-context';
 import { MainLayout } from '@/components/main-layout';
+import { PWARegister } from '@/components/pwa-register';
 
 const ptSans = PT_Sans({
   variable: '--font-pt-sans',
@@ -27,6 +28,7 @@ export default function RootLayout({
       <body className={`${ptSans.variable} font-sans antialiased`}>
         <MotionProvider>
           <DataProvider>
+            <PWARegister />
             <MainLayout>
               {children}
             </MainLayout>

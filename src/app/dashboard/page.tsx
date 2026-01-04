@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from 'react';
+import Link from 'next/link';
 import { startOfMonth } from 'date-fns';
 import { PageHeader } from '@/components/page-header';
 import StatCard from './_components/stat-card';
@@ -10,6 +11,7 @@ import {
   Landmark,
   ShieldCheck,
   Loader2,
+  AlertTriangle,
 } from 'lucide-react';
 import CategorySpendingChart from './_components/category-spending-chart';
 import RecentTransactions from './_components/recent-transactions';
@@ -21,7 +23,7 @@ import type { DateRange } from 'react-day-picker';
 import { useData } from '@/lib/data-context';
 
 export default function DashboardPage() {
-  const { transactions: allTransactions, incomes: allIncomes, savings: allSavings, categories, loading } = useData();
+  const { transactions: allTransactions, incomes: allIncomes, savings: allSavings, categories, loading, currentHome, isHomeLoading } = useData();
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [isClient, setIsClient] = useState(false);
 
@@ -96,7 +98,10 @@ export default function DashboardPage() {
     },
   ];
 
-  if (loading && !allTransactions.length) {
+  // Check if user has no home
+  const hasNoHome = !isHomeLoading && !currentHome;
+
+  if (loading && !allTransactions.length && !hasNoHome) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-16 w-16 animate-spin" />
@@ -109,50 +114,67 @@ export default function DashboardPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
+      className={hasNoHome ? 'pointer-events-none select-none' : ''}
     >
-      <PageHeader
-        title="Dashboard"
-        description="Your financial overview for the selected period."
-      >
-        {isClient && <DateRangePicker onUpdate={setDateRange} defaultRange={dateRange} defaultPreset="this_month" />}
-      </PageHeader>
+      {/* No Home Banner */}
+      {hasNoHome && (
+        <div className="mb-6 p-4 bg-orange-600 text-white rounded-lg flex items-center gap-3 pointer-events-auto">
+          <AlertTriangle className="h-6 w-6 flex-shrink-0" />
+          <p className="font-medium">
+            Not part of any home yet –{' '}
+            <Link href="/settings?tab=home" className="underline font-bold hover:text-orange-100">
+              click here
+            </Link>{' '}
+            to create or join a home.
+          </p>
+        </div>
+      )}
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
-        {stats.map((stat, i) => (
-          <StatCard key={stat.title} {...stat} index={i} />
-        ))}
-      </div>
+      <div className={hasNoHome ? 'opacity-40' : ''}>
+        <PageHeader
+          title="Dashboard"
+          description="Your financial overview for the selected period."
+        >
+          {isClient && <DateRangePicker onUpdate={setDateRange} defaultRange={dateRange} defaultPreset="this_month" />}
+        </PageHeader>
 
-      <div className="grid gap-6 lg:grid-cols-3 mb-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
+          {stats.map((stat, i) => (
+            <StatCard key={stat.title} {...stat} index={i} />
+          ))}
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-3 mb-6">
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <RecentTransactions transactions={transactions} />
+          </MotionDiv>
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <RecentIncomes incomes={incomes} />
+          </MotionDiv>
+          <MotionDiv
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <RecentSavings savings={savings} />
+          </MotionDiv>
+        </div>
         <MotionDiv
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          transition={{ delay: 0.7, duration: 0.5 }}
         >
-          <RecentTransactions transactions={transactions} />
-        </MotionDiv>
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <RecentIncomes incomes={incomes} />
-        </MotionDiv>
-        <MotionDiv
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <RecentSavings savings={savings} />
+          <CategorySpendingChart transactions={transactions} categories={categories} />
         </MotionDiv>
       </div>
-      <MotionDiv
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.7, duration: 0.5 }}
-      >
-        <CategorySpendingChart transactions={transactions} categories={categories} />
-      </MotionDiv>
     </MotionDiv>
   );
 }

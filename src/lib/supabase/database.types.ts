@@ -14,10 +14,63 @@ export type Json =
 export type Database = {
     public: {
         Tables: {
+            homes: {
+                Row: {
+                    id: string;
+                    name: string;
+                    invite_code: string | null;
+                    invite_expires_at: string | null;
+                    created_at: string;
+                    created_by: string;
+                };
+                Insert: {
+                    id?: string;
+                    name?: string;
+                    invite_code?: string | null;
+                    invite_expires_at?: string | null;
+                    created_at?: string;
+                    created_by: string;
+                };
+                Update: {
+                    id?: string;
+                    name?: string;
+                    invite_code?: string | null;
+                    invite_expires_at?: string | null;
+                    created_at?: string;
+                    created_by?: string;
+                };
+            };
+            home_members: {
+                Row: {
+                    id: string;
+                    home_id: string;
+                    user_id: string;
+                    role: 'owner' | 'member';
+                    display_name: string | null;
+                    joined_at: string;
+                };
+                Insert: {
+                    id?: string;
+                    home_id: string;
+                    user_id: string;
+                    role?: 'owner' | 'member';
+                    display_name?: string | null;
+                    joined_at?: string;
+                };
+                Update: {
+                    id?: string;
+                    home_id?: string;
+                    user_id?: string;
+                    role?: 'owner' | 'member';
+                    display_name?: string | null;
+                    joined_at?: string;
+                };
+            };
             categories: {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     icon: string;
                     color: string;
@@ -27,6 +80,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     icon?: string;
                     color?: string;
@@ -36,6 +90,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     icon?: string;
                     color?: string;
@@ -47,6 +102,7 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     icon: string;
                     created_at: string;
@@ -55,6 +111,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     icon?: string;
                     created_at?: string;
@@ -63,6 +120,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     icon?: string;
                     created_at?: string;
@@ -73,6 +131,7 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     created_at: string;
                     updated_at: string;
@@ -80,6 +139,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     created_at?: string;
                     updated_at?: string;
@@ -87,6 +147,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     created_at?: string;
                     updated_at?: string;
@@ -96,6 +157,7 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     created_at: string;
                     updated_at: string;
@@ -103,6 +165,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     created_at?: string;
                     updated_at?: string;
@@ -110,6 +173,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     created_at?: string;
                     updated_at?: string;
@@ -119,6 +183,8 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
+                    added_by: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -134,6 +200,8 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -149,6 +217,8 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date?: string;
                     amount?: number;
                     description?: string;
@@ -166,6 +236,7 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     icon: string;
                     created_at: string;
@@ -174,6 +245,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     icon?: string;
                     created_at?: string;
@@ -182,6 +254,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     icon?: string;
                     created_at?: string;
@@ -192,6 +265,8 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
+                    added_by: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -203,6 +278,8 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -214,6 +291,8 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date?: string;
                     amount?: number;
                     description?: string;
@@ -227,6 +306,7 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
                     name: string;
                     created_at: string;
                     updated_at: string;
@@ -234,6 +314,7 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
                     name: string;
                     created_at?: string;
                     updated_at?: string;
@@ -241,6 +322,7 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
                     name?: string;
                     created_at?: string;
                     updated_at?: string;
@@ -250,6 +332,8 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
+                    added_by: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -261,6 +345,8 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date: string;
                     amount: number;
                     description: string;
@@ -272,6 +358,8 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     date?: string;
                     amount?: number;
                     description?: string;
@@ -285,6 +373,8 @@ export type Database = {
                 Row: {
                     id: string;
                     user_id: string;
+                    home_id: string | null;
+                    added_by: string | null;
                     category_id: string;
                     amount: number;
                     duration: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'bi-annual' | 'annual';
@@ -294,6 +384,8 @@ export type Database = {
                 Insert: {
                     id?: string;
                     user_id: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     category_id: string;
                     amount: number;
                     duration?: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'bi-annual' | 'annual';
@@ -303,6 +395,8 @@ export type Database = {
                 Update: {
                     id?: string;
                     user_id?: string;
+                    home_id?: string | null;
+                    added_by?: string | null;
                     category_id?: string;
                     amount?: number;
                     duration?: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'bi-annual' | 'annual';

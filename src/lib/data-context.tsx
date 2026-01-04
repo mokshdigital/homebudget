@@ -15,6 +15,8 @@ import type {
   Saving,
   Budget,
   Insight,
+  Home,
+  HomeMember,
 } from './types';
 
 interface DataContextProps {
@@ -22,6 +24,16 @@ interface DataContextProps {
   user: User | null;
   isUserLoading: boolean;
   signOut: () => Promise<void>;
+
+  // Home/Household
+  currentHome: Home | null;
+  homeMembers: HomeMember[];
+  isOwner: boolean;
+  isHomeLoading: boolean;
+  needsHomeSetup: boolean;
+  createHome: (name: string) => Promise<void>;
+  updateHomeName: (name: string) => Promise<void>;
+  removeMember: (memberId: string) => Promise<void>;
 
   // Categories
   categories: Category[];
@@ -90,7 +102,6 @@ const DataContext = createContext<DataContextProps | undefined>(undefined);
 function snakeToCamel<T>(obj: Record<string, unknown>): T {
   const result: Record<string, unknown> = {};
   for (const key in obj) {
-    if (key === 'user_id' || key === 'created_at' || key === 'updated_at') continue;
     const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
     result[camelKey] = obj[key];
   }
@@ -114,6 +125,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
 
+  // Home state
+  const [currentHome, setCurrentHome] = useState<Home | null>(null);
+  const [homeMembers, setHomeMembers] = useState<HomeMember[]>([]);
+  const [isHomeLoading, setIsHomeLoading] = useState(true);
+  const [needsHomeSetup, setNeedsHomeSetup] = useState(false);
+
   // Data state
   const [categories, setLocalCategories] = useState<Category[]>([]);
   const [paymentMethods, setLocalPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -129,6 +146,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+
+  // Computed: Is current user the owner?
+  const isOwner = useMemo(() => {
+    if (!user || !homeMembers.length) return false;
+    const currentMember = homeMembers.find(m => m.userId === user.id);
+    return currentMember?.role === 'owner';
+  }, [user, homeMembers]);
 
   // Auth listener
   useEffect(() => {
@@ -148,9 +172,139 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
 
-  // Fetch all data when user changes
-  const fetchAllData = useCallback(async () => {
+  // Fetch home data when user changes
+  const fetchHomeData = useCallback(async () => {
     if (!user) {
+      setIsHomeLoading(false);
+      return;
+    }
+
+    setIsHomeLoading(true);
+    try {
+      // Step 1 & 2: Get active home details in one secure call
+      const { data: activeHomeData, error: activeHomeError } = await (supabase
+        .rpc('get_user_active_home') as any)
+        .maybeSingle();
+
+      if (activeHomeError) throw activeHomeError;
+
+      if (!activeHomeData) {
+        // User has no home, needs setup
+        setNeedsHomeSetup(true);
+        setCurrentHome(null);
+        setHomeMembers([]);
+        setIsHomeLoading(false);
+        setLoading(false); // No home = no data to load
+        return;
+      }
+
+      // Success! Set the home data
+      const homeObj: Home = {
+        id: activeHomeData.id,
+        name: activeHomeData.name,
+        inviteCode: activeHomeData.invite_code,
+        inviteExpiresAt: activeHomeData.invite_expires_at,
+        createdAt: activeHomeData.created_at,
+        createdBy: activeHomeData.created_by,
+      };
+
+      setCurrentHome(homeObj);
+      setNeedsHomeSetup(false);
+
+      // Step 3: Get all members of this home
+      const { data: membersData } = await supabase
+        .from('home_members')
+        .select('*')
+        .eq('home_id', homeObj.id);
+
+      if (membersData) {
+        // Get user emails for display
+        const membersList = membersData.map(m => snakeToCamel<HomeMember>(m as unknown as Record<string, unknown>));
+        setHomeMembers(membersList);
+      }
+
+      setNeedsHomeSetup(false);
+    } catch (err) {
+      console.error('Error fetching home data:', err);
+      // In case of error, assume setup might be needed or just stop loading
+      setNeedsHomeSetup(false); // Don't force redirect on error, might just be network
+    } finally {
+      setIsHomeLoading(false);
+    }
+  }, [user, supabase]);
+
+
+
+  useEffect(() => {
+    if (user) {
+      fetchHomeData();
+    }
+  }, [user, fetchHomeData]);
+
+  // Create a new home (for first-time users)
+  const createHome = async (name: string) => {
+    if (!user) throw new Error('Not authenticated');
+
+    // 1. Create the home
+    const { data: homeData, error: homeError } = await supabase
+      .from('homes')
+      .insert({ name, created_by: user.id } as any)
+      .select()
+      .single();
+
+    if (homeError) throw homeError;
+
+    // 2. Add user as owner
+    const { error: memberError } = await supabase
+      .from('home_members')
+      .insert({
+        home_id: (homeData as any).id,
+        user_id: user.id,
+        role: 'owner',
+        display_name: user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User',
+      } as any);
+
+    if (memberError) {
+      // If adding member fails, we should ideally delete the home to clean up,
+      // but for now let's just throw. The user might have created a 'ghost' home.
+      console.error("Failed to add member to new home:", memberError);
+      throw memberError;
+    }
+
+    // 3. Force refresh immediately
+    await fetchHomeData();
+    setNeedsHomeSetup(false);
+  };
+
+  // Update home name
+  const updateHomeName = async (name: string) => {
+    if (!currentHome) throw new Error('No home');
+
+    const { error } = await (supabase
+      .from('homes') as any)
+      .update({ name })
+      .eq('id', currentHome.id);
+
+    if (error) throw error;
+    setCurrentHome({ ...currentHome, name });
+  };
+
+  // Remove a member
+  const removeMember = async (memberId: string) => {
+    if (!currentHome) throw new Error('No home');
+
+    const { error } = await supabase
+      .from('home_members')
+      .delete()
+      .eq('id', memberId);
+
+    if (error) throw error;
+    setHomeMembers(prev => prev.filter(m => m.id !== memberId));
+  };
+
+  // Fetch all data when home is ready
+  const fetchAllData = useCallback(async () => {
+    if (!user || !currentHome) {
       setLoading(false);
       return;
     }
@@ -170,16 +324,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
         budgetsRes,
         insightsRes,
       ] = await Promise.all([
-        supabase.from('categories').select('*').order('name'),
-        supabase.from('payment_methods').select('*').order('name'),
-        supabase.from('classifications').select('*').order('name'),
-        supabase.from('vendors').select('*').order('name'),
-        supabase.from('transactions').select('*').order('date', { ascending: false }),
-        supabase.from('income_sources').select('*').order('name'),
-        supabase.from('incomes').select('*').order('date', { ascending: false }),
-        supabase.from('saving_locations').select('*').order('name'),
-        supabase.from('savings').select('*').order('date', { ascending: false }),
-        supabase.from('budgets').select('*'),
+        supabase.from('categories').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('payment_methods').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('classifications').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('vendors').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('transactions').select('*').eq('home_id', currentHome.id).order('date', { ascending: false }),
+        supabase.from('income_sources').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('incomes').select('*').eq('home_id', currentHome.id).order('date', { ascending: false }),
+        supabase.from('saving_locations').select('*').eq('home_id', currentHome.id).order('name'),
+        supabase.from('savings').select('*').eq('home_id', currentHome.id).order('date', { ascending: false }),
+        supabase.from('budgets').select('*').eq('home_id', currentHome.id),
         supabase.from('insights').select('*').order('generated_at', { ascending: false }),
       ]);
 
@@ -201,29 +355,31 @@ export function DataProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, [user, supabase]);
+  }, [user, currentHome, supabase]);
 
   useEffect(() => {
-    if (user) {
+    if (user && currentHome) {
       fetchAllData();
     }
-  }, [user, fetchAllData]);
+  }, [user, currentHome, fetchAllData]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setCurrentHome(null);
+    setHomeMembers([]);
   };
 
-  // Generic CRUD helpers
+  // Generic CRUD helpers - now using home_id
   const createSettingsUpdater = <T extends { id: string }>(
     tableName: string,
     setLocal: React.Dispatch<React.SetStateAction<T[]>>
   ) => {
     return async (items: T[]) => {
-      if (!user) return;
+      if (!user || !currentHome) return;
 
-      // Get current items
-      const { data: current } = await supabase.from(tableName).select('id');
+      // Get current items for this home
+      const { data: current } = await supabase.from(tableName).select('id').eq('home_id', currentHome.id);
       const currentIds = new Set((current || []).map((c: { id: string }) => c.id));
       const newIds = new Set(items.map(i => i.id));
 
@@ -238,10 +394,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const snakeItem = camelToSnake(item as unknown as Record<string, unknown>);
         const { error } = await (supabase.from(tableName) as any).upsert({
           ...snakeItem,
-          user_id: user.id,
+          home_id: currentHome.id,
+          user_id: user.id, // satisfying legacy NOT NULL constraint
         });
         if (error) {
           console.error(`Error upserting to ${tableName}:`, error);
+          console.log(`Failed Payload:`, { ...snakeItem, home_id: currentHome.id, user_id: user.id });
           throw error;
         }
       }
@@ -256,11 +414,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
   ) => {
     return {
       add: async (item: Omit<T, 'id'>) => {
-        if (!user) throw new Error('Not authenticated');
+        if (!user || !currentHome) throw new Error('Not authenticated');
 
         const snakeItem = camelToSnake(item as unknown as Record<string, unknown>);
         const { data, error } = await (supabase.from(tableName) as any)
-          .insert({ ...snakeItem, user_id: user.id })
+          .insert({
+            ...snakeItem,
+            home_id: currentHome.id,
+            added_by: user.id,
+            user_id: user.id, // satisfying legacy NOT NULL constraint
+          })
           .select()
           .single();
 
@@ -271,25 +434,25 @@ export function DataProvider({ children }: { children: ReactNode }) {
         }
       },
       update: async (item: T) => {
-        if (!user) throw new Error('Not authenticated');
+        if (!user || !currentHome) throw new Error('Not authenticated');
 
         const snakeItem = camelToSnake(item as unknown as Record<string, unknown>);
         const { error } = await (supabase.from(tableName) as any)
           .update(snakeItem)
           .eq('id', item.id)
-          .eq('user_id', user.id);
+          .eq('home_id', currentHome.id);
 
         if (error) throw error;
         setLocal(prev => prev.map(p => p.id === item.id ? item : p));
       },
       delete: async (id: string) => {
-        if (!user) throw new Error('Not authenticated');
+        if (!user || !currentHome) throw new Error('Not authenticated');
 
         const { error } = await supabase
           .from(tableName)
           .delete()
           .eq('id', id)
-          .eq('user_id', user.id);
+          .eq('home_id', currentHome.id);
 
         if (error) throw error;
         setLocal(prev => prev.filter(p => p.id !== id));
@@ -306,6 +469,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
     user,
     isUserLoading,
     signOut,
+
+    // Home
+    currentHome,
+    homeMembers,
+    isOwner,
+    isHomeLoading,
+    needsHomeSetup,
+    createHome,
+    updateHomeName,
+    removeMember,
 
     categories,
     setCategories: createSettingsUpdater('categories', setLocalCategories),
@@ -351,7 +524,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     insights,
 
-    loading: loading || isUserLoading,
+    loading: loading || isUserLoading || isHomeLoading,
     error,
     refreshData: fetchAllData,
   };
