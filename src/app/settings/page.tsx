@@ -44,7 +44,7 @@ export default function SettingsPage() {
         description="Customize your categories, payment methods, and more."
       />
       <Tabs defaultValue={tabFromUrl} className="w-full">
-        <TabsList className="flex-wrap h-auto justify-start">
+        <TabsList className="flex-nowrap h-auto justify-start overflow-x-auto w-full no-scrollbar pb-1">
           <TabsTrigger value="home">Home & Members</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="payment-methods">Payment Methods</TabsTrigger>

@@ -12,11 +12,15 @@ import type { Income } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/lib/data-context';
 
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileIncomeList } from './_components/mobile-list';
+
 export default function IncomePage() {
   const { incomes, addIncome, updateIncome, deleteIncome, loading } = useData();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingIncome, setEditingIncome] = useState<Income | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
 
   const handleAddClick = () => {
@@ -31,36 +35,36 @@ export default function IncomePage() {
 
   const handleDelete = async (incomeId: string) => {
     try {
-        await deleteIncome(incomeId);
-        toast({
-            title: "Income Deleted",
-            description: "The income record has been successfully deleted.",
-        });
+      await deleteIncome(incomeId);
+      toast({
+        title: "Income Deleted",
+        description: "The income record has been successfully deleted.",
+      });
     } catch (error) {
-        console.error("Failed to delete income:", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to delete income. Please try again.",
-        });
+      console.error("Failed to delete income:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete income. Please try again.",
+      });
     }
   };
-  
+
   const handleFormSubmit = async (data: Income) => {
     try {
-        if (editingIncome) {
-            await updateIncome(data);
-        } else {
-            const { id, ...rest } = data;
-            await addIncome(rest);
-        }
+      if (editingIncome) {
+        await updateIncome(data);
+      } else {
+        const { id, ...rest } = data;
+        await addIncome(rest);
+      }
     } catch (error) {
-        console.error("Failed to save income:", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to save income. Please try again.",
-        });
+      console.error("Failed to save income:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save income. Please try again.",
+      });
     }
   };
 
@@ -68,21 +72,31 @@ export default function IncomePage() {
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center h-96">
-            <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
   }
 
   return (
-    <div>
+    <div className="pb-6">
       <PageHeader title="Income" description="Manage and track all your income.">
-          <Button onClick={handleAddClick}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Income
-          </Button>
+        <Button onClick={handleAddClick}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Income
+        </Button>
       </PageHeader>
-      <IncomeDataTable columns={columns} data={incomes} />
+
+      {isMobile ? (
+        <MobileIncomeList
+          data={incomes}
+          onEdit={handleEditClick}
+          onDelete={handleDelete}
+        />
+      ) : (
+        <IncomeDataTable columns={columns} data={incomes} />
+      )}
+
       <IncomeForm
         open={isFormOpen}
         onOpenChange={setIsFormOpen}

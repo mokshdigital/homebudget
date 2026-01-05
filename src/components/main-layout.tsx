@@ -28,6 +28,7 @@ import {
   Loader2,
   PlusCircle,
   Home,
+  Camera,
 } from "lucide-react";
 import { AppLogo } from "@/components/app-logo";
 import { AnimatePresence, motion } from "framer-motion";
@@ -44,6 +45,7 @@ const menuItems = [
   { href: "/income", icon: Landmark, label: "Income" },
   { href: "/savings", icon: PiggyBank, label: "Savings" },
   { href: "/budgets", icon: Wallet, label: "Budgets" },
+  { href: "/scan", icon: Camera, label: "Scan" }, // Added Scan
   { href: "/reports", icon: FileText, label: "Reports" },
 ];
 
@@ -169,6 +171,10 @@ function BottomNavBar() {
             <ArrowLeftRight className="mr-2 h-4 w-4" />
             New Expense
           </Button>
+          <Button variant="outline" size="lg" onClick={() => { setIsAddSheetOpen(false); router.push('/scan'); }}>
+            <Camera className="mr-2 h-4 w-4" />
+            Scan Receipt
+          </Button>
           <Button variant="outline" size="lg" onClick={() => { setIsAddSheetOpen(false); router.push('/income'); }}>
             <Landmark className="mr-2 h-4 w-4" />
             New Income
@@ -191,6 +197,7 @@ const publicPages = [
   '/privacy-policy',
   '/terms-and-conditions',
   '/disclaimer',
+  '/auth/confirm',
 ];
 
 export function MainLayout({ children }: { children: React.ReactNode }) {

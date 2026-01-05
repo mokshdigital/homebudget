@@ -12,11 +12,15 @@ import type { Transaction } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useData } from '@/lib/data-context';
 
+import { useIsMobile } from '@/hooks/use-mobile';
+import { MobileTransactionList } from './_components/mobile-list';
+
 export default function ExpensesPage() {
   const { transactions, addTransaction, updateTransaction, deleteTransaction, loading } = useData();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const { toast } = useToast();
+  const isMobile = useIsMobile();
 
 
   const handleAddClick = () => {
@@ -31,36 +35,36 @@ export default function ExpensesPage() {
 
   const handleDelete = async (transactionId: string) => {
     try {
-        await deleteTransaction(transactionId);
-        toast({
-            title: "Expense Deleted",
-            description: "The expense has been successfully deleted.",
-        });
+      await deleteTransaction(transactionId);
+      toast({
+        title: "Expense Deleted",
+        description: "The expense has been successfully deleted.",
+      });
     } catch (error) {
-        console.error("Failed to delete expense:", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to delete expense. Please try again.",
-        });
+      console.error("Failed to delete expense:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete expense. Please try again.",
+      });
     }
   };
-  
+
   const handleFormSubmit = async (data: Transaction) => {
     try {
-        if (editingTransaction) {
-            await updateTransaction(data);
-        } else {
-            const { id, ...rest } = data;
-            await addTransaction(rest);
-        }
+      if (editingTransaction) {
+        await updateTransaction(data);
+      } else {
+        const { id, ...rest } = data;
+        await addTransaction(rest);
+      }
     } catch (error) {
-        console.error("Failed to save expense:", error);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to save expense. Please try again.",
-        });
+      console.error("Failed to save expense:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save expense. Please try again.",
+      });
     }
   };
 
@@ -68,21 +72,31 @@ export default function ExpensesPage() {
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center h-96">
-            <Loader2 className="h-8 w-8 animate-spin" />
-        </div>
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
     );
   }
 
   return (
-    <div>
+    <div className="pb-6">
       <PageHeader title="Expenses" description="Manage and track all your expenses.">
-          <Button onClick={handleAddClick}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Expense
-          </Button>
+        <Button onClick={handleAddClick}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Add Expense
+        </Button>
       </PageHeader>
-      <ExpensesDataTable columns={columns} data={transactions} />
+
+      {isMobile ? (
+        <MobileTransactionList
+          data={transactions}
+          onEdit={handleEditClick}
+          onDelete={handleDelete}
+        />
+      ) : (
+        <ExpensesDataTable columns={columns} data={transactions} />
+      )}
+
       <ExpenseForm
         open={isFormOpen}
         onOpenChange={setIsFormOpen}
