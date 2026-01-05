@@ -222,24 +222,27 @@ export function ManageList<T extends Transaction>({ items, setItems, transaction
           <CardDescription>Add, edit, or delete your custom {title.toLowerCase()}.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2 mb-4 items-center">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4 items-stretch sm:items-center">
             <Input
               placeholder={`New ${itemName} name`}
               value={newItemName}
               onChange={(e) => setNewItemName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
+              className="flex-1"
             />
-            {isCategory && (
-              <Input
-                type="color"
-                value={newItemColor}
-                onChange={(e) => setNewItemColor(e.target.value)}
-                className="p-1 h-10 w-14"
-              />
-            )}
-            <Button onClick={handleAddItem} className="shrink-0" disabled={isSubmitting}>
-              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <><PlusCircle className="h-4 w-4 mr-2" /> Add</>}
-            </Button>
+            <div className="flex gap-2">
+              {isCategory && (
+                <Input
+                  type="color"
+                  value={newItemColor}
+                  onChange={(e) => setNewItemColor(e.target.value)}
+                  className="p-1 h-10 w-full sm:w-14"
+                />
+              )}
+              <Button onClick={handleAddItem} className="flex-1 sm:flex-none" disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <><PlusCircle className="h-4 w-4 mr-2" /> Add</>}
+              </Button>
+            </div>
           </div>
           <div className="space-y-2">
             {items.map((item) => (

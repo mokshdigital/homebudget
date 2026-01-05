@@ -18,7 +18,8 @@ This session transformed the application from a desktop-centric dashboard into a
     - `src/app/savings/_components/mobile-list.tsx`
     - `src/app/reports/_components/mobile-report-list.tsx`
   - Integrated `useIsMobile` hook to conditionally render Table (Desktop) vs List (Mobile).
-  - Updated `src/app/settings/page.tsx` to allow horizontal scrolling for Tabs on mobile.
+  - Updated `src/app/settings/page.tsx` to use a native dropdown on mobile/tabs on desktop.
+    - Optimized `ManageList` forms (stacked inputs) for mobile screens.
 
 #### B. PWA & Deployment Fixes
 - **Issue:** PWA features were not fully active.

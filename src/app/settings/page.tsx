@@ -2,9 +2,10 @@
 "use client";
 
 import React from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/page-header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ManageList } from './_components/manage-list';
 import HomeMembersSettings from './_components/home-members';
 import DeleteAccount from './_components/delete-account';
@@ -14,7 +15,9 @@ import { Loader2 } from 'lucide-react';
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
-  const tabFromUrl = searchParams.get('tab') || 'home';
+  const router = useRouter();
+  const initialTab = searchParams.get('tab') || 'home';
+  const [activeTab, setActiveTab] = React.useState(initialTab);
 
   const {
     categories, setCategories,
@@ -29,6 +32,11 @@ export default function SettingsPage() {
     loading
   } = useData();
 
+  const handleTabChange = (val: string) => {
+    setActiveTab(val);
+    router.replace(`/settings?tab=${val}`);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -37,23 +45,51 @@ export default function SettingsPage() {
     );
   }
 
+  const tabs = [
+    { value: 'home', label: 'Home & Members' },
+    { value: 'categories', label: 'Categories' },
+    { value: 'payment-methods', label: 'Payment Methods' },
+    { value: 'classifications', label: 'Classifications' },
+    { value: 'vendors', label: 'Vendors' },
+    { value: 'income-sources', label: 'Income Sources' },
+    { value: 'saving-locations', label: 'Saving Locations' },
+    { value: 'danger', label: 'Danger Zone', className: 'text-destructive' }
+  ];
+
   return (
-    <div>
+    <div className="space-y-4">
       <PageHeader
         title="Settings"
         description="Customize your categories, payment methods, and more."
       />
-      <Tabs defaultValue={tabFromUrl} className="w-full">
-        <TabsList className="flex-nowrap h-auto justify-start overflow-x-auto w-full no-scrollbar pb-1">
-          <TabsTrigger value="home">Home & Members</TabsTrigger>
-          <TabsTrigger value="categories">Categories</TabsTrigger>
-          <TabsTrigger value="payment-methods">Payment Methods</TabsTrigger>
-          <TabsTrigger value="classifications">Classifications</TabsTrigger>
-          <TabsTrigger value="vendors">Vendors</TabsTrigger>
-          <TabsTrigger value="income-sources">Income Sources</TabsTrigger>
-          <TabsTrigger value="saving-locations">Saving Locations</TabsTrigger>
-          <TabsTrigger value="danger" className="text-destructive data-[state=active]:text-destructive">Danger Zone</TabsTrigger>
+
+      {/* Mobile Navigation: Select Dropdown */}
+      <div className="sm:hidden w-full">
+        <label className="text-sm font-medium mb-2 block text-muted-foreground">Navigate to...</label>
+        <Select value={activeTab} onValueChange={handleTabChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select setting..." />
+          </SelectTrigger>
+          <SelectContent>
+            {tabs.map(t => (
+              <SelectItem key={t.value} value={t.value} className={t.className}>
+                {t.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        {/* Desktop Navigation: Tabs */}
+        <TabsList className="hidden sm:flex flex-wrap h-auto justify-start w-full mb-4">
+          {tabs.map(t => (
+            <TabsTrigger key={t.value} value={t.value} className={t.className}>
+              {t.label}
+            </TabsTrigger>
+          ))}
         </TabsList>
+
         <TabsContent value="home">
           <HomeMembersSettings />
         </TabsContent>
