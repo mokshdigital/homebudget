@@ -16,6 +16,18 @@ const ptSans = PT_Sans({
 export const metadata: Metadata = {
   title: 'MyHomeBudget - Master Your Money',
   description: 'Track expenses, manage budgets, and get AI-powered financial insights.',
+  manifest: '/manifest.json',
+  icons: {
+    icon: '/icon.png',
+    apple: '/icons/icon-192x192.png',
+  },
+  themeColor: '#0f172a',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 };
 
 export default function RootLayout({
