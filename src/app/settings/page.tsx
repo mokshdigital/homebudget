@@ -64,7 +64,7 @@ export default function SettingsPage() {
       />
 
       {/* Mobile Navigation: Select Dropdown */}
-      <div className="sm:hidden w-full">
+      <div className="md:hidden w-full">
         <label className="text-sm font-medium mb-2 block text-muted-foreground">Navigate to...</label>
         <Select value={activeTab} onValueChange={handleTabChange}>
           <SelectTrigger className="w-full">
@@ -82,7 +82,7 @@ export default function SettingsPage() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         {/* Desktop Navigation: Tabs */}
-        <TabsList className="hidden sm:flex flex-wrap h-auto justify-start w-full mb-4">
+        <TabsList className="hidden md:flex flex-wrap h-auto justify-start w-full mb-4">
           {tabs.map(t => (
             <TabsTrigger key={t.value} value={t.value} className={t.className}>
               {t.label}
