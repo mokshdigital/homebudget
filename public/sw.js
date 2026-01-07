@@ -1,17 +1,7 @@
 
-const CACHE_NAME = 'homebudgai-v1';
+const CACHE_NAME = 'homebudgai-v2';
 const urlsToCache = [
   '/',
-  '/dashboard',
-  '/expenses',
-  '/income',
-  '/savings',
-  '/budgets',
-  '/reports',
-  '/budget-tool',
-  '/settings',
-  '/login',
-  '/unauthorized',
   '/manifest.json',
   '/icons/icon.svg',
   '/icons/icon-maskable.svg'
@@ -34,9 +24,11 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        return fetch(event.request);
+        // Use redirect: 'manual' to handle redirects (e.g. auth) correctly
+        // This prevents the "Response served by the service worker has redirections" error
+        return fetch(event.request, { redirect: 'manual' });
       }
-    )
+      )
   );
 });
 
