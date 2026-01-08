@@ -91,4 +91,31 @@ This session transformed the application from a desktop-centric dashboard into a
 
 ---
 
-*End of Session: January 4, 2026, 8:35 PM PST*
+## Session Date: January 7, 2026
+**Focus:** Bug Fixes - Service Worker Redirects
+**Agent:** Antigravity (Google Deepmind)
+**Duration:** Quick Fix
+
+---
+
+### 1. Summary of Changes
+Resolved a critical "Response served by the service worker has redirections" error that was preventing the PWA from handling navigation redirects (e.g. Authentication redirects to `/login`) correctly.
+
+---
+
+### 2. Key Actions Taken
+
+#### A. Service Worker Fix
+- **Issue:** The Service Worker was intercepting navigation requests (like `/`) and responding with the `redirected: true` result of a `fetch` call, which browsers block for security reasons.
+- **Solution:** 
+  - Updated `public/sw.js` to use `{ redirect: 'manual' }` in the `fetch` handler.
+  - This allows the browser to receive the redirect response (30x) directly and handle the navigation URL update natively, bypassing the opaque redirect restriction.
+  - Updated cache version to `homebudgai-v2`.
+
+---
+
+### 3. Verification
+- `npm run build` passed successfully.
+- Verified `manifest.json` and icons are present.
+
+---

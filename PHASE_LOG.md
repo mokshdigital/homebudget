@@ -66,3 +66,4 @@
 |---------|------|------------|
 | 0.1.0 | Initial | Core CRUD, Auth, Desktop UI |
 | 0.2.0 | Jan 4, 2026 | Mobile-first UI, PWA, AI Receipt Scanner |
+| 0.2.1 | Jan 7, 2026 | Bug fix: Service Worker redirect handling |
